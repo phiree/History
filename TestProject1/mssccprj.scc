@@ -1,0 +1,5 @@
+SCC = This is a Source Code Control file
+
+[TestProject1.csproj]
+SCC_Aux_Path = "D:\VssDb"
+SCC_Project_Name = "$/History/TestProject1", HNRAAAAA

@@ -1,0 +1,535 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>New Web Project</title>
+
+    <script language="JavaScript" type="text/javascript" src="js/json2.js">
+    </script>
+
+    <script language="JavaScript" type="text/javascript" src="js/jquery-1.4.1.js">
+    </script>
+
+    <script language="JavaScript" type="text/javascript" src="js/getElementsByClassName-1.0.1.js">
+    </script>
+
+    <script language="JavaScript" type="text/javascript" src="js/assert/assert.js">
+    </script>
+
+    <script type="text/javascript" src="js/browser.js">
+    </script>
+
+    <style type="text/css">
+        .outContainer
+        {
+            background-color: #ccc;
+            float: left;
+        }
+        .container
+        {
+            width: 500px;
+            height: 400px;
+            overflow: scroll;
+        }
+        .section
+        {
+            white-space: normal;
+            word-break: break-all;
+        }
+        .inner
+        {
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        New Web Project Page</h1>
+    <div class="outContainer">
+        <div id="leftTop">
+            C
+        </div>
+        <div id="leftContainer" class="container">
+            <div id="leftInner" class="inner">
+            </div>
+        </div>
+        <input type="button" id="leftPrev" value="Prev" /><input type="button" id="leftNext"
+            value="Next" />
+    </div>
+    <div class="outContainer">
+        <div id="rightTop">
+            D
+        </div>
+        <div id="rightContainer" class="container">
+            <div id="rightInner" class="inner">
+            </div>
+        </div>
+        <input type="button" id="rightPrev" value="Prev" /><input type="button" id="rightNext"
+            value="Next" />
+    </div>
+
+    <script language="javascript" type="text/javascript">
+    /*同步浏览器.
+      同步阅读两段文字.
+      实现:
+      1 将文字分为若干段,以相同的唯一值序列标记,浏览任意一部分时,根据当期段落的序列号同步滚动另一部分的段落;
+      2 支持ajax内容加载.根据规则(序列号接近最大值,或者包含当前段落的div与容器底部的距离缩小到某个范围)通过ajax获取服务器数据,附加到当前内容之后.
+      
+      名词:
+      内容:要同步浏览的内容
+      段落:内容分段.
+      */    
+      /*
+        请求流程
+        Client
+        Init(time,twopanel)
+      */
+      
+        var pageSize = 20;//每次获取的最大段落数
+            var startIndex = {
+                "left": 1,
+                "right": 1
+            };
+			/*
+			 * 
+			 */
+            var startTimeIndex = {
+                "left": -9999,
+                "right": -9999
+            };
+            //应该属于数据提供程序..
+            var serviceUrl = {
+                "left": "service/Handler.ashx?country=Iraq&pagesize=" + pageSize,
+                "right": "service/Handler.ashx?country=china&pagesize=" + pageSize
+            };
+            var focusedDiv = "left"; //当前操作的div: left or right
+            var preScrollTop = {
+                "left": 0,
+                "right": 0
+            }; //滚动的距离,用来判断滚动的方向
+            var isScrollByScript = false;
+            var currentItemId=-1;
+			var isIdChanged=true;
+            //导航按钮
+            var isClick = false;
+            function NavClick(eventSource){
+                Log("Begin of NavClick");
+                
+                // Log("isClick:" + isClick);
+                var focusedDivPosition = eventSource.id.substring(0, eventSource.id.length - 4, false);
+                var direction = eventSource.id.substr(eventSource.id.length - 4, 4, false);
+                var result = GetNearest(direction, focusedDivPosition, false);
+                
+                ScrollToNearest(direction, focusedDivPosition, result.scrollDistance);
+                if (direction == "Next") {
+                    ContinueLoad(result.currentId, focusedDivPosition);
+                }
+                var otherDivId = focusedDivPosition == "right" ? "left" : "right";
+                // ScrollToId(otherDivId, result.currentId, direction);
+                Log("End of NavClick");
+            }
+            
+         
+            var scrollTimes = 0;
+            var initScrollDiv = "left";
+            function Scroll(eventSource){
+                Log("Begin of Scroll:" + eventSource.id);
+                //	Log(new Date());
+                //console.trace();
+                var currentDiv = eventSource.id.substring(0, eventSource.id.length - 9);
+                var currentScrollTop = eventSource.scrollTop;
+                var scrolldistance = currentScrollTop -preScrollTop[currentDiv];
+                
+                if (isClick) {
+                    // return;
+                }
+                
+                if (scrollTimes >= 1) {
+                    scrollTimes = 0;
+                    return;
+                }
+                
+                //获取当前div
+                //Log(currentPreScrollTop+','+preScrollTop);
+                var scrollDirection = scrolldistance>=0 ? "Next" : "Prev";
+                //	Log(scrollDirection);
+            
+                var otherDiv = currentDiv == "right" ? "left" : "right";
+                var container = eventSource;
+                
+                var innerContainer = getElementsByClassName("inner", "div", eventSource)[0];
+                
+                var nearestId = GetNearest(scrollDirection, currentDiv, true).currentId;
+                
+                ContinueLoad(nearestId, currentDiv);
+                //                if (nearestId >= startIndex[currentDiv] - 1 ||
+                //                innerContainer.offsetHeight - container.scrollTop - container.offsetHeight <= 20) {
+                //                    LoadContent(currentDiv);
+                //                    
+                //                }
+                preScrollTop[currentDiv] = currentScrollTop;
+                scrollTimes = 1;
+                //需要对方同步滚动;
+				if (isIdChanged) {
+					ScrollToId(otherDiv, nearestId, scrollDirection);
+				}
+				else
+				{
+					SynScroll(currentDiv,nearestId,scrolldistance);
+				}
+                Log("End of Scroll");
+            }
+
+            /* 当前panel的内容ID还没改变的条件下, 让两边内容同步滚动 
+             * 需要的数据: 当点div,滚动的距离
+             */
+            function SynScroll(div, nearestId, scrollDistance){
+                //1 定位.当前div的绝对位置.
+				var other=div=="right"?"left":"right";
+				var divleft=GetContainer(div);
+				var divRight=GetContainer(other);
+				 var leftDivs = getElementsByClassName("section", "div", divleft.innerContainer);
+                 var leftheight=0,rightHeight=0;
+                //innerContainer.scrollTop=id*20;
+                //	id=22;
+                for (var i = 0 in leftDivs) {
+                
+                    //divs[i].style.backgroundColor = "#ccc";
+                    
+                    if (leftDivs[i].id == nearestId) {
+                    
+                       // divs[i].style.backgroundColor = "blue";
+                        leftheight=leftDivs[i].clientHeight;
+                        //   if (scrollDistance < this.content.scrollHeight) {
+                    }
+                }
+				 var rightDivs = getElementsByClassName("section", "div", divRight.innerContainer);
+              
+                //innerContainer.scrollTop=id*20;
+                //	id=22;
+                for (var i = 0 in rightDivs) {
+                
+                    //divs[i].style.backgroundColor = "#ccc";
+                    
+                    if (rightDivs[i].id == nearestId) {
+                    
+                       // divs[i].style.backgroundColor = "blue";
+                        rightHeight=rightDivs[i].clientHeight;
+                        //   if (scrollDistance < this.content.scrollHeight) {
+                    }
+                }
+				var otherScrollDistance=scrollDistance*(rightHeight/leftheight);
+				divRight.container.scrollTop+=otherScrollDistance;
+            }
+            
+            //通过ajax加载内容,currentDiv:left or right.
+            function LoadContent(focusedDivPosition){
+                var xhr = new XMLHttpRequest();
+                //var nearestId = GetNearest("Next", currentDiv, true).currentId;
+                var timeIndex = -9999999999999;
+                var url = serviceUrl[focusedDivPosition] + "&startIndex=" + startIndex[focusedDivPosition] + "&timeIndex=" + timeIndex;
+                
+                
+                xhr.open("GET", url);
+                xhr.send(null);
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState == 4) {
+                        if (xhr.status == 200) {
+                            LoadContent_Callback(JSON.parse(xhr.responseText), focusedDivPosition);
+                        }
+                    }
+                }
+                
+            }
+            
+            function LoadContent_Callback(data, focusedDivPosition){
+                startIndex[focusedDivPosition] = startIndex[focusedDivPosition] + data.length;
+                for (var i = 0; i < data.length; i++) {
+                    var section = document.createElement("div");
+                    
+                    section.className = "section";
+                    
+                    section.innerHTML = data[i].Id + ':' + data[i].Content.replace(new RegExp("\r\n", "gm"), "<br/>")
+                    section.id = data[i].Id;
+                    
+                    
+                    var timeIndexhid = document.createElement("input");
+                    timeIndexhid.type = "hidden";
+                    timeIndexhid.value = data[i].TimeIndex;
+                    section.appendChild(timeIndexhid);
+                    document.getElementById(focusedDivPosition + "Inner").appendChild(section);
+                }
+                
+            }
+
+            
+            //获取离顶端最近的item的id,以及需要滚动的距离
+            //是否是滚动.
+            function GetNearest(direction, focusedDivPosition, isScroll){
+            
+                var result = {};
+                var innerContainer = document.getElementById(focusedDivPosition + "Container");
+                var divs = getElementsByClassName("section", "div", innerContainer);
+                var currentIndex = 0;
+                var nearestId = 0;
+                var minScap = 99999;
+                var scap = 0; //
+                //滚动的最小值判断
+                var positionToContainer; //当前section是否在container的上方
+                for (i = 0; i < divs.length; i++)// div in divs)
+                {
+                
+                    divs[i].style.backgroundColor = "#ccc";
+                    if (isScroll) {
+                        if (direction == "Next") {
+                            //
+                            scap = divs[i].offsetTop + divs[i].clientHeight - innerContainer.scrollTop - innerContainer.offsetTop;
+                            
+                        }
+                        else 
+                            if (direction == "Prev" && i > 0) {
+                                scap = innerContainer.offsetHeight - (divs[i - 1].offsetTop + divs[i - 1].clientHeight - innerContainer.scrollTop - innerContainer.offsetTop);
+                                
+                            }
+                        // 
+                        if (scap < minScap && scap > 0) {
+                            minScap = scap;
+                            currentIndex = i;
+                            
+                        }
+                        
+                    }
+                    else {
+                    
+                    
+                        scap = innerContainer.offsetTop - (divs[i].offsetTop - innerContainer.scrollTop);
+                        if (Math.abs(scap) < minScap) {
+                            currentIndex = i;
+                            if (scap == 0) {
+                                positionToContainer = "equal";
+                            }
+                            else 
+                                if (scap > 0) {
+                                    positionToContainer = "above";
+                                }
+                                else {
+                                    positionToContainer = "below";
+                                }
+                            minScap = scap;
+                        }
+                    }
+                }
+                var divtop = innerContainer.scrollTop - minScap;
+                var nearestDiv = divs[currentIndex];
+                
+                if (!isScroll) {
+                    //如果是按钮导航,则需要根据当前div的位置来确定下一个div的index
+                    if (direction == "Next") {
+                        if (positionToContainer == "above" || positionToContainer == "equal") {
+                            if (currentIndex < divs.length - 1) {
+                                divtop = divtop + divs[currentIndex].offsetHeight;
+                                nearestDiv = divs[currentIndex + 1];
+                            }
+                        }
+                    }
+                    if (direction == "Prev") {
+                        if (positionToContainer == "below" || positionToContainer == "equal") {
+                            if (currentIndex > 0) {
+                                divtop = divtop - divs[currentIndex - 1].offsetHeight;
+                                nearestDiv = divs[currentIndex - 1];
+                            }
+                        }
+                    }
+                }
+                // hideSign.value = nearestDiv.id;
+                //nearestDiv.style.backgroundColor = "red";
+				
+                result.scrollDistance = divtop;
+                result.currentId = nearestDiv.id;
+				if (isPreScroll&&isScroll) {
+					isIdChanged = currentItemId != nearestDiv.id;
+				}
+				else
+				{
+					isIdChanged=true;
+					isPreScroll=true;
+				}
+				isPreScroll=isScroll;
+				currentItemId=nearestDiv.id;
+                Log("scap:"+scap);
+                DisplayTop(focusedDivPosition, "当前ID:" + result.currentId);
+                return result;
+            }
+            var isPreScroll=true;
+            function DisplayTop(focusedPositionId, displayData){
+                var topDiv = document.getElementById(focusedPositionId + "Top");
+                topDiv.innerHTML = displayData;
+            }
+            
+            //将最近的item滚动到可视范围顶端
+            function GetNearestByScroll(direction, containerDiv){
+            
+            }
+            
+            function ScrollToNearest(direction, focusedDivPosition, scrollDistance){
+                Log("Begin of ScrolltoNearest");
+                var innerContainer = document.getElementById(focusedDivPosition + "Inner");
+                var container = document.getElementById(focusedDivPosition + "Container");
+                container.scrollTop = scrollDistance;
+                Log("End of ScrolltoNearest");
+            }
+            
+            
+            //将对应div滚动到container顶端.,
+            var preTop = 0;
+            function ScrollToId(focusedDivPosition, cid, direction){
+                Log("Begin of ScrollToId");
+                if (direction == "Next") {
+                    ContinueLoad(cid, focusedDivPosition);
+                }
+                var innerContainer = GetContainer(focusedDivPosition).innerContainer;
+                var container = GetContainer(focusedDivPosition).container;
+                
+                var divs = getElementsByClassName("section", "div", innerContainer);
+                var scrollDistance = 0;
+                //innerContainer.scrollTop=id*20;
+                //	id=22;
+                for (var i = 0 in divs) {
+                
+                    //divs[i].style.backgroundColor = "#ccc";
+                    
+                    if (divs[i].id == cid) {
+                    
+                       // divs[i].style.backgroundColor = "blue";
+                        scrollDistance = divs[i].offsetTop - container.scrollTop - container.offsetTop;
+                        //   if (scrollDistance < this.content.scrollHeight) {
+                    }
+                }
+                //Log("preTop:"+preTop+",currentTop:"+container.scrollTop);
+                //Log("scrollDistance:"+scrollDistance);
+                DisplayTop(focusedDivPosition, "当前ID:" + cid);
+                if (scrollDistance == 0) {
+                    scrollTimes = 0;
+                }
+                else {
+                    // $(container).unbind("scroll");
+                    // delete container.onscroll;
+                    
+                    isScrollByScript = true;
+                    container.scrollTop = container.scrollTop + scrollDistance;
+                    //innerContainer.offsetTop+=scrollDistance;
+                    preTop = container.scrollTop;
+                }
+                //  setTimeout(function(){
+                // 	DelaySetScrollTop(container, scrollDistance);
+                //  },1);
+                //  $(container).bind("scroll",Scroll(container));
+                // container.onscroll = function() { Scroll(container); };
+                Log("End of ScrollToID");
+            }
+            
+            function DelaySetScrollTop(element, distance){
+                element.scrollTop = distance;
+                
+            }
+            
+            function GetScrollDistance(container, currentdiv, direction){
+            
+            }
+            
+            
+            function ContinueLoad(currentId, focusedDivPosition){
+                //  var contentElement=
+                var containers = GetContainer(focusedDivPosition);
+                var distanceBetweenBottom = containers.innerContainer.offsetHeight -
+                containers.container.scrollTop -
+                containers.container.offsetHeight;
+                /*
+                 "  container.scrollTop:" +
+                 containers.container.scrollTop +
+                 "  container.offsetHeight:" +
+                 containers.container.offsetHeight +
+                 "  distanceBetweenBottom:" +
+                 distanceBetweenBottom);*/
+                if (currentId >= startIndex[focusedDivPosition] - 1 ||
+                distanceBetweenBottom <= 20) {
+                    LoadContent(focusedDivPosition);
+                }
+            }
+            
+            /*helper*/
+            /*
+             * 根据div的位置(left,right)获取该元素
+             * 返回值为{innerContainer:obj,container:obj}
+             */
+            function GetContainer(position){
+                var containers = {};
+                containers.innerContainer = document.getElementById(position + "Inner");
+                containers.container = document.getElementById(position + "Container");
+                return containers;
+                
+            }
+            
+            var IsDebug = true;
+            function Log(msg){
+                if (!IsDebug) 
+                    return;
+                if (BrowserDetect.browser == "Chrome" || BrowserDetect.browser == "Firefox") {
+                
+                    console.log(msg);
+                    
+                }
+                else 
+                    if (BrowserDetect.browser == "Explorer") {
+                        var log4IeDiv = document.getElementById("log4IeDiv");
+                        
+                        if (log4IeDiv == null) {
+                            log4IeDiv = document.createElement("Div");
+                            log4IeDiv.style.position = "absolute";
+                            log4IeDiv.style.zIndex = 99;
+                            log4IeDiv.style.top = 0;
+                            log4IeDiv.style.backgroundColor = "green";
+                            log4IeDiv.id = "log4IeDiv";
+                            document.body.appendChild(log4IeDiv);
+                        }
+                        log4IeDiv.innerHTML += msg + "<br/>";
+                    }
+            }
+            
+            
+            document.getElementById("leftPrev").onclick = function(){
+                //isClick = true;
+                NavClick(this);
+               // isClick = false;
+            }
+            document.getElementById("rightNext").onclick = function(){
+               // isClick = true;
+                NavClick(this);
+               // isClick = false;
+            }
+            document.getElementById("rightPrev").onclick = function(){
+               // isClick = true;
+                NavClick(this);
+               // isClick = false;
+            }
+            document.getElementById("leftNext").onclick = function(){
+              //  isClick = true;
+                NavClick(this);
+               // isClick = false;
+            }
+			$("#leftContainer").scroll(function(){Scroll(document.getElementById("leftContainer"));} );
+            //document.getElementById("leftContainer").onscroll = function(){
+            
+                //Scroll(this);
+           // }
+            document.getElementById("rightContainer").onscroll = function(){
+            
+                Scroll(this);
+            }
+            
+            
+            LoadContent("right");
+            LoadContent("left");
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,2 @@
+remove support for a)static data source b)add and remove  panel on the air,
+focus on ajax load.

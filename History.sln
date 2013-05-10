@@ -1,0 +1,142 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8F0EB593-9CFD-4899-8E4F-29D51D5BBD3B}"
+	ProjectSection(SolutionItems) = preProject
+		History.vsmdi = History.vsmdi
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "History.Bll", "bll\History.Bll.csproj", "{2F3722E6-921C-44DF-81FC-5811D0085DC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{21CBB41B-7C28-41A4-ADD7-48489ABB6059}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "web", "web", "{4442E1C8-BF79-41AD-9C8C-BDD8662ECC4E}"
+	ProjectSection(WebsiteProperties) = preProject
+		SccProjectName = ""$/History", KIRAAAAA"
+		SccAuxPath = ""
+		SccLocalPath = ".."
+		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
+		ProjectReferences = "{2F3722E6-921C-44DF-81FC-5811D0085DC7}|History.Bll.dll;{21CBB41B-7C28-41A4-ADD7-48489ABB6059}|Model.dll;{423FC58A-E47B-4FBD-AF2A-9D66A28F7E2A}|DataTract.dll;{B334D573-0198-4CB3-B68F-26B18A986197}|SqliteDB.dll;{CCC2C2AA-67F9-4BF0-A03B-7F3CEF106B33}|ZZTJTract.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/web"
+		Debug.AspNetCompiler.PhysicalPath = "web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\web\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/web"
+		Release.AspNetCompiler.PhysicalPath = "web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\web\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "6734"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDB", "IDB\IDB.csproj", "{17D2E850-C6F3-40BC-A3A0-C02707187454}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDataTract", "IDataTract\IDataTract.csproj", "{423FC58A-E47B-4FBD-AF2A-9D66A28F7E2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZZTJTract", "ZZTJTract\ZZTJTract.csproj", "{CCC2C2AA-67F9-4BF0-A03B-7F3CEF106B33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHComponents", "..\PH\PHComponents\PHComponents.csproj", "{9E627D39-EA21-47F4-8500-51E5CCD8A103}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{6C4626B9-E860-4621-82CF-87CD5CE5BCAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqliteDB", "SqliteDB\SqliteDB.csproj", "{B334D573-0198-4CB3-B68F-26B18A986197}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = History.vsmdi
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 10
+		SccLocalPath0 = .
+		CanCheckoutShared = false
+		SccProjectUniqueName1 = bll\\History.Bll.csproj
+		SccLocalPath1 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection1 = bll\\
+		SccProjectUniqueName2 = Model\\Model.csproj
+		SccLocalPath2 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection2 = Model\\
+		SccWebProject3 = true
+		SccProjectUniqueName3 = web
+		SccLocalPath3 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection3 = web\\
+		SccProjectEnlistmentChoice3 = 2
+		SccProjectUniqueName4 = ..\\PH\\PHComponents\\PHComponents.csproj
+		SccProjectName4 = \u0022$/PH/PHComponents\u0022,\u0020DIEAAAAA
+		SccLocalPath4 = ..\\PH\\PHComponents
+		CanCheckoutShared = false
+		SccProjectUniqueName5 = IDB\\IDB.csproj
+		SccLocalPath5 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection5 = IDB\\
+		SccProjectUniqueName6 = IDataTract\\IDataTract.csproj
+		SccLocalPath6 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection6 = IDataTract\\
+		SccProjectUniqueName7 = ZZTJTract\\ZZTJTract.csproj
+		SccLocalPath7 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection7 = ZZTJTract\\
+		SccProjectUniqueName8 = TestProject1\\TestProject1.csproj
+		SccLocalPath8 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection8 = TestProject1\\
+		SccProjectUniqueName9 = SqliteDB\\SqliteDB.csproj
+		SccLocalPath9 = .
+		CanCheckoutShared = false
+		SccProjectFilePathRelativizedFromConnection9 = SqliteDB\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F3722E6-921C-44DF-81FC-5811D0085DC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F3722E6-921C-44DF-81FC-5811D0085DC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F3722E6-921C-44DF-81FC-5811D0085DC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F3722E6-921C-44DF-81FC-5811D0085DC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21CBB41B-7C28-41A4-ADD7-48489ABB6059}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21CBB41B-7C28-41A4-ADD7-48489ABB6059}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21CBB41B-7C28-41A4-ADD7-48489ABB6059}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21CBB41B-7C28-41A4-ADD7-48489ABB6059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4442E1C8-BF79-41AD-9C8C-BDD8662ECC4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4442E1C8-BF79-41AD-9C8C-BDD8662ECC4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4442E1C8-BF79-41AD-9C8C-BDD8662ECC4E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{4442E1C8-BF79-41AD-9C8C-BDD8662ECC4E}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{17D2E850-C6F3-40BC-A3A0-C02707187454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17D2E850-C6F3-40BC-A3A0-C02707187454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17D2E850-C6F3-40BC-A3A0-C02707187454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17D2E850-C6F3-40BC-A3A0-C02707187454}.Release|Any CPU.Build.0 = Release|Any CPU
+		{423FC58A-E47B-4FBD-AF2A-9D66A28F7E2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{423FC58A-E47B-4FBD-AF2A-9D66A28F7E2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{423FC58A-E47B-4FBD-AF2A-9D66A28F7E2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{423FC58A-E47B-4FBD-AF2A-9D66A28F7E2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC2C2AA-67F9-4BF0-A03B-7F3CEF106B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC2C2AA-67F9-4BF0-A03B-7F3CEF106B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC2C2AA-67F9-4BF0-A03B-7F3CEF106B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC2C2AA-67F9-4BF0-A03B-7F3CEF106B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E627D39-EA21-47F4-8500-51E5CCD8A103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E627D39-EA21-47F4-8500-51E5CCD8A103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E627D39-EA21-47F4-8500-51E5CCD8A103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E627D39-EA21-47F4-8500-51E5CCD8A103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C4626B9-E860-4621-82CF-87CD5CE5BCAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C4626B9-E860-4621-82CF-87CD5CE5BCAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C4626B9-E860-4621-82CF-87CD5CE5BCAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C4626B9-E860-4621-82CF-87CD5CE5BCAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B334D573-0198-4CB3-B68F-26B18A986197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B334D573-0198-4CB3-B68F-26B18A986197}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B334D573-0198-4CB3-B68F-26B18A986197}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B334D573-0198-4CB3-B68F-26B18A986197}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

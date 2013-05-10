@@ -1,0 +1,42 @@
+
+#sp_leftDiv, #sp_rightDiv, #eng, #chi
+{
+	float: left;
+}
+#sp_leftContentDiv, #sp_rightContentDiv
+{
+	border: solid 1px #999;
+	height: 500px;
+	width: 400px;
+	background-color: #eee;
+}
+.synPcontainer
+{
+    
+	float: left;
+	padding-top:10px;
+	/*border: solid 1px #999;*/
+
+}
+.synPcontent
+{
+	
+	height: 550px;
+	width: 500px;
+	word-break:all;
+	overflow-y:scroll;
+	
+}
+.synPitem,.synPitemAlt
+{
+	 border-bottom-style:dotted;
+	border-bottom:dashed 1px #ddd;
+	
+	padding-bottom:3px;
+	margin:0 10px;
+	}
+.synPitemAlt
+{
+	 background-color:#eee;
+	
+	}
